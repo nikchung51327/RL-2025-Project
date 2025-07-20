@@ -1,0 +1,6 @@
+Deep Q learning Algorithm
+water tank control
+Lr stabilisation
+continuous grid
+set up github
+set up meeting with Daniel to get review on first exercise
