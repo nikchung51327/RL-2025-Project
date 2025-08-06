@@ -1,4 +1,4 @@
-from environment import Environment
+from L1.q_learning.environment import Environment
 from pprint import pprint
 from random import random, randint
 import matplotlib.pyplot as plt
