@@ -37,9 +37,10 @@ delta_values = {}
 for iteration in range(max_iterations):
     delta = 0
     new_vT = vT.copy()
+    new_vT[TERMINAL_POS] = RT[TERMINAL_POS]  # value of terminal state = reward of terminal state
     for pos in RT:
         if pos == TERMINAL_POS:
-            optimal_policy[pos] = 'G'  # Terminal position
+            optimal_policy[pos] = 'Goal'  # Terminal position
             # Skip terminal position as its value is fixed
         else:
             s_down = (pos[0] + 1, pos[1])
@@ -63,7 +64,7 @@ for iteration in range(max_iterations):
             rotations = [action_list[i:] + action_list[:i] for i in range(num_rotations)]
             
             for rotation in rotations:
-                # 1st iteration: change optimum probability
+            
                 opt_prob = 1 - NOISE
                 non_opt_prob = NOISE/3
                 # The first action in the rotation is considered the optimal action
@@ -74,9 +75,8 @@ for iteration in range(max_iterations):
             # Find the action with the maximum value
             best_action = max(action_list_val, key=action_list_val.get)
 
-            # Update the optimal policy for the current position
             
-            # Determine policy direction
+            # Determine policy direction, derived from the best action.
             if best_action == s_up:
                 optimal_policy[pos] = '↑'
             elif best_action == s_down:
@@ -97,6 +97,7 @@ for iteration in range(max_iterations):
             delta_values[iteration] = delta
 
     vT = new_vT
+    
 
     print(f"Iteration {iteration}, max delta: {delta}")
     if delta < threshold:
@@ -123,8 +124,8 @@ value_grid = np.array([[vT[(i, j)] for j in range(GRID_SIZE)] for i in range(GRI
 policy_grid = np.array([[optimal_policy.get((i, j), '') for j in range(GRID_SIZE)] for i in range(GRID_SIZE)])
 
 # Enhanced contrast using percentiles
-vmin = np.percentile(value_grid, 7.5)
-vmax = np.percentile(value_grid, 75)
+vmin = np.percentile(value_grid, 0)
+vmax = np.percentile(value_grid, 100)
 norm = colors.Normalize(vmin=vmin, vmax=vmax)
 
 # Plot heatmap
