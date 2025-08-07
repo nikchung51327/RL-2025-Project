@@ -16,7 +16,7 @@ RT = env.rT
 vT = {pos: 0 for pos in RT}
 
 
-# initilize the value table with known rewards
+# initilize the reward table with known rewards
 for pos in RT:
     if pos == TERMINAL_POS:
         RT[pos] = 100
