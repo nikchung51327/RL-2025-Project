@@ -4,11 +4,14 @@ from matplotlib import pyplot as plt
 import numpy as np
 from matplotlib import colors
 import random
+
 TERMINAL_POS = (4, 4)
 HOLE_POS = [(1, 1), (1, 2), (2, 1), (2, 2)]
 GAMMA = 0.9
 NOISE = 0.2
 GRID_SIZE = 5
+THRESHOLD = 5
+MAX_ITERATIONS = 1000
 
 env = Environment()
 RT = env.rT
@@ -24,10 +27,6 @@ for pos in RT:
         RT[pos] = -30
     else:
         RT[pos] = -1
-
-
-threshold = 1
-max_iterations = 1000
 
 optimal_policy = {pos: None for pos in RT}
 
@@ -69,9 +68,11 @@ pprint(optimal_policy)
 finding_optimal_policy = True
 
 policy_update_count = 0
+iterations_for_each_policy = {}
 
 while finding_optimal_policy:
-    for iteration in range(max_iterations):
+    iteration = 0
+    for iteration in range(MAX_ITERATIONS):
         delta = 0
         new_vT = vT.copy()
         new_vT[TERMINAL_POS] = RT[TERMINAL_POS]  # value of terminal state = reward of terminal state
@@ -125,12 +126,14 @@ while finding_optimal_policy:
                 new_vT[pos] = best_action_value
                 
                 delta = max(delta, abs(new_vT[pos] - vT[pos]))
+                
+        
 
         vT = new_vT
         
 
         print(f"Iteration {iteration}, max delta: {delta}")
-        if delta < threshold:
+        if delta < THRESHOLD:
             print("Converged!")
             break
     
@@ -174,13 +177,25 @@ while finding_optimal_policy:
             elif best_action == s_right:
                 new_optimal_policy[pos] = '→'
     
+    iterations_for_each_policy[policy_update_count] = iteration
+    iteration += 1
+
     if new_optimal_policy == optimal_policy:
         print("Optimal policy found!")
         finding_optimal_policy = False
     else:
         policy_update_count += 1
+        
         print(f"Policy update count: {policy_update_count}")
         optimal_policy = new_optimal_policy
+
+iterations_for_each_policy["Total number of iterations"] = sum(iterations_for_each_policy.values()) 
+# Summary
+print(f"""
+Optimal policy found after {policy_update_count} policy updates.
+Iterations for each policy update: {iterations_for_each_policy}""")
+
+
 
 ### SECTION FOR PLOTTING ----------------------------------------- ###
 
